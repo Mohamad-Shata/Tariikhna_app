@@ -1,0 +1,14 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Local editor / session config
+.claude/
+
+# Secrets — never commit these
+backend/.env
+frontend/.streamlit/secrets.toml
+
+# NOTE: backend/tariikhna.db and backend/media/ ARE committed on purpose —
+# they hold the imported storybook content the app serves.

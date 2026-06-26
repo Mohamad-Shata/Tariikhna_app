@@ -1,0 +1,52 @@
+[
+  {
+    "story_id": 1,
+    "scene_number": 1,
+    "scene_summary": "Abd al-Muttalib, near the end of his life, entrusts his orphaned grandson Muhammad to the care of his son Abu Talib.",
+    "key_visual_action": "Abd al-Muttalib, seated and frail with age, places his hand on Abu Talib's shoulder while young Muhammad stands nearby, holding Abu Talib's other hand",
+    "characters_present": ["Abd al-Muttalib", "Abu Talib", "young Muhammad"],
+    "setting": "Inside a tent or simple room in Makkah, modest furnishings, warm lamplight suggesting evening",
+    "emotional_tone": "tender, solemn, a passing of responsibility between generations",
+    "time_of_day": "evening"
+  },
+  {
+    "story_id": 2,
+    "scene_number": 1,
+    "scene_summary": "Young Muhammad is given the choice to stay with Zayd or be sold back to his father; Zayd chooses to remain, and Muhammad declares him family before the Quraysh.",
+    "key_visual_action": "Muhammad (shown from behind, identifiable by his cloak) holds Zayd's hand and raises it before a small gathering near the Kaaba, declaring him family",
+    "characters_present": ["young Muhammad (shown from behind only)", "Zayd ibn Harithah", "Harithah (Zayd's father)", "Ka'b (Zayd's uncle)", "a few onlooking Quraysh men"],
+    "setting": "Open courtyard near the Kaaba in Makkah, sandy ground, simple stone structures in the background",
+    "emotional_tone": "loyalty, warmth, quiet triumph",
+    "time_of_day": "midday"
+  },
+  {
+    "story_id": 3,
+    "scene_number": 1,
+    "scene_summary": "Abu Bakr purchases Zunayrah's freedom from her cruel master, ending her suffering as a persecuted slave.",
+    "key_visual_action": "Abu Bakr handing coins to a disgruntled slave-owner while gently helping Zunayrah, who is now free, to her feet",
+    "characters_present": ["Abu Bakr", "Zunayrah", "an unnamed slave-owner"],
+    "setting": "A dusty marketplace street in Makkah, simple mudbrick buildings, a few onlookers in the distance",
+    "emotional_tone": "relief, quiet justice, compassion overcoming cruelty",
+    "time_of_day": "midday"
+  },
+  {
+    "story_id": 4,
+    "scene_number": 1,
+    "scene_summary": "Abu Bakr's father questions why he frees only weak slaves instead of strong ones who could protect him; Abu Bakr explains he seeks only God's reward.",
+    "key_visual_action": "Abu Bakr standing calmly with his hand over his heart, speaking to his seated, puzzled father in their home",
+    "characters_present": ["Abu Bakr", "Abu Bakr's father"],
+    "setting": "Modest sitting area inside a Makkan home, simple woven mats and cushions",
+    "emotional_tone": "conviction, quiet sincerity, generational contrast in values",
+    "time_of_day": "afternoon"
+  },
+  {
+    "story_id": 5,
+    "scene_number": 1,
+    "scene_summary": "After the Battle of Khaybar, the Prophet gently reproaches Bilal for leading two young women past the bodies of the fallen, teaching mercy even toward one's enemies.",
+    "key_visual_action": "The Prophet (shown from behind, in his green cloak) speaking earnestly to a remorseful Bilal, with two young women standing slightly apart, visibly shaken",
+    "characters_present": ["the Prophet (shown from behind only)", "Bilal", "Safiyyah bint Huyayy (modestly dressed, face may be shown or veiled per your standard rule)", "Safiyyah's cousin (modestly dressed)"],
+    "setting": "Open desert terrain near Khaybar, simple tents in the distance, late afternoon light",
+    "emotional_tone": "gentle correction, compassion, moral teaching",
+    "time_of_day": "late afternoon"
+  }
+]
