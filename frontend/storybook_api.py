@@ -1,29 +1,48 @@
 """
-Tiny client for the Tariikhna backend, shared by all Streamlit pages.
+Data access shared by all Streamlit pages.
 
-The backend base URL is resolved in this order, so the same frontend works
-locally and when deployed:
-  1. st.secrets["TARIIKHNA_API_URL"]   (Streamlit Community Cloud → Settings → Secrets)
-  2. TARIIKHNA_API_URL environment variable
-  3. http://127.0.0.1:8000             (local default)
+There are two interchangeable data sources, picked automatically:
+
+  • LOCAL  — read the bundled SQLite DB + images directly (no server). This is
+             the default and powers the single-service Streamlit Cloud deploy.
+  • API    — call a running FastAPI backend over HTTP. Used when an explicit
+             backend URL is configured.
+
+Selection order:
+  1. TARIIKHNA_API_URL set (st.secrets or env)  → API mode at that URL
+  2. bundled database present                   → LOCAL mode
+  3. otherwise                                  → API mode at http://127.0.0.1:8000
+
+The two sources return identical dict shapes, so the pages don't care which is
+used. To force API mode locally (e.g. to test the backend), set
+TARIIKHNA_API_URL=http://127.0.0.1:8000.
 """
 import os
 import time
 import requests
 import streamlit as st
 
+import local_store
 
-def _resolve_api_url() -> str:
-    # st.secrets raises if there is no secrets file at all, so guard it.
+
+def _configured_api_url():
+    """Explicitly configured backend URL, or None if not set."""
     try:
         if "TARIIKHNA_API_URL" in st.secrets:
             return str(st.secrets["TARIIKHNA_API_URL"]).rstrip("/")
     except Exception:
-        pass
-    return os.environ.get("TARIIKHNA_API_URL", "http://127.0.0.1:8000").rstrip("/")
+        pass  # no secrets file at all
+    env = os.environ.get("TARIIKHNA_API_URL")
+    return env.rstrip("/") if env else None
 
 
-API_URL = _resolve_api_url()
+_explicit_url = _configured_api_url()
+if _explicit_url:
+    DATA_MODE, API_URL = "api", _explicit_url
+elif local_store.available():
+    DATA_MODE, API_URL = "local", None
+else:
+    DATA_MODE, API_URL = "api", "http://127.0.0.1:8000"
 
 # Warm storybook palette, reused across pages for inline-styled bits.
 PALETTE = {
@@ -36,18 +55,30 @@ PALETTE = {
 
 
 class BackendError(Exception):
-    """Raised when the backend can't be reached or returns an error."""
+    """Raised when the data source can't be reached or returns an error."""
 
 
 @st.cache_data(ttl=60, show_spinner=False)
 def list_stories() -> list[dict]:
     """All stories as summary cards. Cached briefly to keep paging snappy."""
+    if DATA_MODE == "local":
+        try:
+            return local_store.list_stories()
+        except Exception as exc:
+            raise BackendError(f"Couldn't read the local story database.\n\n({exc})") from exc
     return _get("/library/stories")
 
 
 @st.cache_data(ttl=60, show_spinner=False)
 def get_story(story_id: int) -> dict:
     """One story with its ordered panels."""
+    if DATA_MODE == "local":
+        try:
+            return local_store.get_story(int(story_id))
+        except KeyError as exc:
+            raise BackendError("That story could not be found.") from exc
+        except Exception as exc:
+            raise BackendError(f"Couldn't read the local story database.\n\n({exc})") from exc
     return _get(f"/library/stories/{story_id}")
 
 
@@ -100,18 +131,31 @@ def open_story(story_id: int) -> None:
 
 
 def show_backend_error(exc: Exception) -> None:
-    """Render a friendly, actionable error block when the API is unavailable."""
+    """Render a friendly, actionable error block when data can't be loaded."""
     st.error("⚠️ The story library isn't available right now.")
     st.caption(str(exc))
-    with st.expander("How to start the backend"):
-        st.code(
-            "cd tariikhna/backend\n"
-            "uvicorn app.main:app --reload\n\n"
-            "# (one-time) load the stories into the database:\n"
-            "python import_storybook.py",
-            language="bash",
-        )
-        st.write(f"Frontend is configured to call: `{API_URL}`")
+    if DATA_MODE == "local":
+        with st.expander("Why? (local data mode)"):
+            st.write(
+                "The app is reading the bundled database directly, but it could "
+                "not be opened. Make sure `backend/tariikhna.db` and "
+                "`backend/media/` exist (they should be committed to the repo)."
+            )
+            st.code(
+                "cd backend\n"
+                "python import_storybook.py --source \"<path to Corrected>\"",
+                language="bash",
+            )
+    else:
+        with st.expander("How to start the backend"):
+            st.code(
+                "cd backend\n"
+                "uvicorn app.main:app --reload\n\n"
+                "# (one-time) load the stories into the database:\n"
+                "python import_storybook.py",
+                language="bash",
+            )
+            st.write(f"Frontend is configured to call: `{API_URL}`")
 
 
 def inject_base_css() -> None:
