@@ -1,2 +1,6 @@
-streamlit==1.39.0
-requests==2.32.3
+# Unpinned (within major) so the deploy host can resolve wheels for whatever
+# Python it runs. Streamlit Cloud is on Python 3.14, which has no prebuilt
+# wheels for old pillow (streamlit 1.39 pinned pillow<11). A modern streamlit
+# pulls a pillow that has current cp314 wheels.
+streamlit>=1.40,<2
+requests>=2.32

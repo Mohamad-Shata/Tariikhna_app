@@ -35,7 +35,7 @@ for row_start in range(0, len(stories), PER_ROW):
         with col:
             with st.container(border=True):
                 if story.get("cover_image"):
-                    st.image(story["cover_image"], use_column_width=True)
+                    st.image(story["cover_image"], use_container_width=True)
 
                 st.markdown(f"### {story['title']}")
                 st.markdown(

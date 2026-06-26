@@ -87,7 +87,7 @@ cols = st.columns(min(len(stories), 4))
 for col, story in zip(cols, stories[:4]):
     with col:
         if story.get("cover_image"):
-            st.image(story["cover_image"], use_column_width=True)
+            st.image(story["cover_image"], use_container_width=True)
         st.markdown(f"**{story['title']}**")
         st.markdown(
             f"<span class='tk-age'>Ages {story.get('reading_age','—')}</span>",

@@ -115,7 +115,7 @@ for i, panel in enumerate(panels):
     if image_left:
         with left:
             if img:
-                st.image(img, use_column_width=True)
+                st.image(img, use_container_width=True)
         with right:
             st.markdown(text_block, unsafe_allow_html=True)
     else:
@@ -123,7 +123,7 @@ for i, panel in enumerate(panels):
             st.markdown(text_block, unsafe_allow_html=True)
         with right:
             if img:
-                st.image(img, use_column_width=True)
+                st.image(img, use_container_width=True)
     st.write("")
     st.divider()
 
