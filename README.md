@@ -52,17 +52,19 @@ The importer copies the illustrations into `backend/media/`, so the backend is
 
 ## Setup & run (local)
 
-From the `tariikhna/` folder:
+From the repo root:
 
 ```bash
 # 1. one-time: create a virtualenv and install deps
 py -V:3.10 -m venv .venv
 .venv/Scripts/python -m pip install -r backend/requirements.txt -r frontend/requirements.txt
 
-# 2. one-time: import the corrected stories into the database
+# 2. (optional) re-import the stories — the data is already committed in
+#    backend/tariikhna.db + backend/media/, so you only need this if the source
+#    JSON changes. The source lives in the separate graduation-project repo, so
+#    point --source at it explicitly:
 cd backend
-../.venv/Scripts/python import_storybook.py
-#   (custom source: ../.venv/Scripts/python import_storybook.py --source "C:/path/to/Corrected")
+../.venv/Scripts/python import_storybook.py --source "../../Graduation-Project/Finalization/Examples/Corrected"
 
 # 3. run the backend  (terminal 1, from backend/)
 ../.venv/Scripts/python -m uvicorn app.main:app --reload

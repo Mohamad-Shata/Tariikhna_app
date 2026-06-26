@@ -20,33 +20,19 @@ storybook to run, so the backend needs no secrets.
 
 ## Step 0 — Get the code on GitHub
 
-**Recommended: a standalone `tariikhna` repo.** Streamlit Cloud and Render clone
-the *entire* repo on every deploy. Your `graduation-project` repo also contains
-`Finalization/`, `Phase_1/`, etc. (large, image-heavy) — cloning all of that on
-each deploy is slow and may hit size limits. `tariikhna/` is self-contained, so:
+This app lives in its own standalone repo — **`Mohamad-Shata/Tariikhna_app`** —
+with the app **flat at the repo root** (`backend/` and `frontend/` are top-level).
+That keeps deploy clones small and the host paths simple. Just commit and push
+any changes:
 
 ```bash
-cd tariikhna
-git init
-# stop tracking the committed secret file (keeps it on disk, removes from git):
-git rm --cached backend/.env 2>/dev/null || true
-git add .
-git commit -m "Tariikhna storybook app"
-# create an empty repo named e.g. "tariikhna" on GitHub, then:
-git remote add origin https://github.com/<you>/tariikhna.git
-git push -u origin main
+git add -A
+git commit -m "Deploy config"
+git push
 ```
 
-In a standalone repo the paths are `backend/` and `frontend/`.
-
-<details>
-<summary>Alternative: deploy from the existing <code>graduation-project</code> monorepo (no split)</summary>
-
-You don't have to split. Just prefix the paths in the steps below with
-`tariikhna/` (e.g. Render Root Directory = `tariikhna/backend`, Streamlit main
-file = `tariikhna/frontend/streamlit_app.py`). The only downside is the slower
-full-repo clone described above.
-</details>
+Both `backend/tariikhna.db` and `backend/media/` are committed (the content the
+app serves); `backend/.env` and the venv are gitignored.
 
 ---
 
@@ -56,7 +42,7 @@ full-repo clone described above.
    `backend/media/` are committed (they are not gitignored).
 2. On [render.com](https://render.com) → **New → Web Service** → connect the repo.
 3. Settings:
-   - **Root Directory:** `backend`  *(monorepo: `tariikhna/backend`)*
+   - **Root Directory:** `backend`
    - **Build Command:** `pip install -r requirements.txt`
    - **Start Command:** *(leave blank — the `Procfile` is used)* or set:
      `uvicorn app.main:app --host 0.0.0.0 --port $PORT --proxy-headers --forwarded-allow-ips=*`
@@ -76,7 +62,6 @@ the browser would block them as mixed content on the HTTPS frontend.
 1. On [share.streamlit.io](https://share.streamlit.io) → **New app** → pick the repo.
 2. Settings:
    - **Main file path:** `frontend/streamlit_app.py`
-     *(monorepo: `tariikhna/frontend/streamlit_app.py`)*
    - **Branch:** `main`
 3. Open **Advanced settings → Secrets** and paste (using your Render URL):
    ```toml
