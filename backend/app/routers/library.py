@@ -50,12 +50,13 @@ def _story_summary(request: Request, story: Story, panel_count: int) -> dict:
         "reading_age": story.reading_age,
         "key_figures": story.key_figures or [],
         "cover_image": _media_url(request, story.cover_image),
+        "introduction_audio": _variants_to_urls(request, story.introduction_audio),
+        "conclusion_audio": _variants_to_urls(request, story.conclusion_audio),
         "panel_count": panel_count,
     }
 
 
 def _panel_payload(request: Request, scene: Scene) -> dict:
-    variants = _variants_to_urls(request, scene.image_variants)
     return {
         "id": scene.id,
         "panel_number": scene.scene_number,
@@ -63,7 +64,9 @@ def _panel_payload(request: Request, scene: Scene) -> dict:
         "narrative_text": scene.narrative_text,
         "moral_lesson": scene.moral_lesson,
         "image_url": _media_url(request, scene.image_url),
-        "image_variants": variants,
+        "image_variants": _variants_to_urls(request, scene.image_variants),
+        "audio_url": _media_url(request, scene.audio_url),
+        "audio_variants": _variants_to_urls(request, scene.audio_variants),
         "characters": scene.schema_json.get("characters", []),
         "era": scene.schema_json.get("era"),
         "region": scene.schema_json.get("region"),

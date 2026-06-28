@@ -36,14 +36,18 @@ set. See [DEPLOY.md](DEPLOY.md).
 
 ## The data
 
-The content comes from `Finalization/Examples/Corrected/`:
+The content comes from `Finalization/Examples/Corrected/` (illustrations) and
+`Finalization/Audio/` (narration):
 
 - **4 stories**, each a sequence of panels (scenes) with a `narrative_text`,
   `unit_title`, and per-scene `moral_lesson`.
 - Each scene has **two illustration variants**: `base` (`output_base/images`) and
   `v1` (`output_v1/images`, richer prompts). The narrative is identical between
   them — only the artwork differs — so the Reader offers a **Storybook / Detailed**
-  toggle to switch illustration sets.
+  toggle to switch sets.
+- Each scene, plus the intro and conclusion, also has **narration audio** (MP3,
+  `base` + `v1`). The Reader shows a 🔊 player so children can listen to the text;
+  the narration follows the same Storybook / Detailed toggle.
 
 | Story | Slug | Scenes | Ages |
 |-------|------|--------|------|
@@ -52,8 +56,8 @@ The content comes from `Finalization/Examples/Corrected/`:
 | A Transfer of Care | `the_orphan_taken_in` | 6 | 6–10 |
 | The First Muslim Man | `zayd_the_first_muslim_man` | 6 | 8–12 |
 
-The importer copies the illustrations into `backend/media/`, so the backend is
-**self-contained** and does not depend on the `Finalization/` folder at runtime.
+The importer copies the illustrations and audio into `backend/media/`, so the app
+is **self-contained** and does not depend on the `Finalization/` folder at runtime.
 
 ---
 
@@ -91,7 +95,9 @@ committed in `backend/tariikhna.db` + `backend/media/`):
 
 ```bash
 cd backend
-../.venv/Scripts/python import_storybook.py --source "../../Graduation-Project/Finalization/Examples/Corrected"
+../.venv/Scripts/python import_storybook.py \
+    --source "../../Graduation-Project/Finalization/Examples/Corrected" \
+    --audio  "../../Graduation-Project/Finalization/Audio"
 ```
 
 The data source is chosen automatically: `TARIIKHNA_API_URL` set → API mode;

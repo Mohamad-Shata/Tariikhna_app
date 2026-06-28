@@ -38,6 +38,11 @@ class Story(SQLModel, table=True):
     key_figures: list = Field(default=[], sa_column=Column(JSON))
     cover_image: Optional[str] = None       # relative media path of cover panel
 
+    # Narration for the intro/conclusion text, per illustration variant:
+    # {"base": "<path>", "v1": "<path>"}
+    introduction_audio: dict = Field(default={}, sa_column=Column(JSON))
+    conclusion_audio: dict = Field(default={}, sa_column=Column(JSON))
+
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
@@ -61,6 +66,10 @@ class Scene(SQLModel, table=True):
     # Default illustration (relative media path or absolute URL) + all variants.
     image_url: Optional[str] = None
     image_variants: dict = Field(default={}, sa_column=Column(JSON))
+
+    # Narration of this panel's text, per illustration variant.
+    audio_url: Optional[str] = None
+    audio_variants: dict = Field(default={}, sa_column=Column(JSON))
 
     safety_notes: Optional[str] = None      # why something was flagged, if it was
 

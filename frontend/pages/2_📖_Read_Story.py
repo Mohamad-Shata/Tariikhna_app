@@ -76,6 +76,14 @@ def panel_image(panel: dict) -> str | None:
     return panel.get("image_url")  # fallback to default
 
 
+def pick_audio(variants: dict, default=None) -> str | None:
+    """Narration for the current variant, falling back to base / any / default."""
+    variants = variants or {}
+    if choice and variants.get(choice):
+        return variants[choice]
+    return variants.get("base") or next(iter(variants.values()), None) or default
+
+
 # ── Title + context ───────────────────────────────────────────────────────────
 st.markdown(f"# {story['title']}")
 meta_bits = []
@@ -95,6 +103,10 @@ if story.get("introduction"):
         f"<div class='tk-context'>{story['introduction']}</div>",
         unsafe_allow_html=True,
     )
+    intro_audio = pick_audio(story.get("introduction_audio", {}))
+    if intro_audio:
+        st.caption("🔊 Listen to the introduction")
+        st.audio(intro_audio)
 
 st.write("")
 st.divider()
@@ -102,6 +114,7 @@ st.divider()
 # ── Scenes: image beside narrative text, alternating sides ────────────────────
 for i, panel in enumerate(panels):
     img = panel_image(panel)
+    audio = pick_audio(panel.get("audio_variants", {}), panel.get("audio_url"))
     text_block = (
         f"<div class='tk-panelnum'>Scene {panel.get('panel_number', i + 1)}</div>"
         f"<h3 style='margin:0.2rem 0 0.6rem;'>{panel.get('title','')}</h3>"
@@ -110,6 +123,12 @@ for i, panel in enumerate(panels):
     if panel.get("moral_lesson"):
         text_block += f"<div class='tk-moral'>💛 {panel['moral_lesson']}</div>"
 
+    def render_text():
+        st.markdown(text_block, unsafe_allow_html=True)
+        if audio:
+            st.caption("🔊 Listen to this scene")
+            st.audio(audio)
+
     image_left = i % 2 == 0  # alternate for visual rhythm
     left, right = st.columns([1, 1], gap="large", vertical_alignment="center")
     if image_left:
@@ -117,10 +136,10 @@ for i, panel in enumerate(panels):
             if img:
                 st.image(img, use_container_width=True)
         with right:
-            st.markdown(text_block, unsafe_allow_html=True)
+            render_text()
     else:
         with left:
-            st.markdown(text_block, unsafe_allow_html=True)
+            render_text()
         with right:
             if img:
                 st.image(img, use_container_width=True)
@@ -134,6 +153,10 @@ if story.get("conclusion"):
         f"<div class='tk-context'>{story['conclusion']}</div>",
         unsafe_allow_html=True,
     )
+    concl_audio = pick_audio(story.get("conclusion_audio", {}))
+    if concl_audio:
+        st.caption("🔊 Listen to the ending")
+        st.audio(concl_audio)
 
 if story.get("moral_lesson"):
     st.write("")
