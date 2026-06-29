@@ -36,18 +36,13 @@ set. See [DEPLOY.md](DEPLOY.md).
 
 ## The data
 
-The content comes from `Finalization/Examples/Corrected/` (illustrations) and
-`Finalization/Audio/` (narration):
+The content comes from the `Graduation-Project` repo — illustrations from
+`output_base/images/` and narration from `Finalization/Audio/output_base/`:
 
 - **4 stories**, each a sequence of panels (scenes) with a `narrative_text`,
-  `unit_title`, and per-scene `moral_lesson`.
-- Each scene has **two illustration variants**: `base` (`output_base/images`) and
-  `v1` (`output_v1/images`, richer prompts). The narrative is identical between
-  them — only the artwork differs — so the Reader offers a **Storybook / Detailed**
-  toggle to switch sets.
-- Each scene, plus the intro and conclusion, also has **narration audio** (MP3,
-  `base` + `v1`). The Reader shows a 🔊 player so children can listen to the text;
-  the narration follows the same Storybook / Detailed toggle.
+  `unit_title`, and per-scene `moral_lesson`, plus one illustration each.
+- Each scene, plus the intro and conclusion, also has **narration audio** (MP3).
+  The Reader shows a 🔊 player so children can listen to the text.
 
 | Story | Slug | Scenes | Ages |
 |-------|------|--------|------|
@@ -90,14 +85,17 @@ cd frontend
 TARIIKHNA_API_URL=http://127.0.0.1:8000 ../.venv/Scripts/python -m streamlit run streamlit_app.py
 ```
 
-**Re-import the stories** (only if the source JSON changes — the data is already
-committed in `backend/tariikhna.db` + `backend/media/`):
+**Re-import the stories** (only if the source changes — the data is already
+committed in `backend/tariikhna.db` + `backend/media/`). With the default layout
+(the `Graduation-Project` repo sitting next to this one) no args are needed:
 
 ```bash
 cd backend
-../.venv/Scripts/python import_storybook.py \
-    --source "../../Graduation-Project/Finalization/Examples/Corrected" \
-    --audio  "../../Graduation-Project/Finalization/Audio"
+../.venv/Scripts/python import_storybook.py
+# or pass explicit folders:
+#   --images "<path>/Graduation-Project/output_base/images"
+#   --stories "<path>/Graduation-Project/Finalization/Audio/output_base/stories"
+#   --audio  "<path>/Graduation-Project/Finalization/Audio/output_base/audio"
 ```
 
 The data source is chosen automatically: `TARIIKHNA_API_URL` set → API mode;

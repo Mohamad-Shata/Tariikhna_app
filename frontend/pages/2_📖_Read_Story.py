@@ -42,47 +42,10 @@ except api.BackendError as exc:
     st.stop()
 
 # ── Top bar ───────────────────────────────────────────────────────────────────
-top_l, top_r = st.columns([3, 1])
-with top_l:
-    if st.button("←  Back to the Library"):
-        st.switch_page("pages/1_📚_Stories.py")
+if st.button("←  Back to the Library"):
+    st.switch_page("pages/1_📚_Stories.py")
 
 panels = story.get("panels", [])
-
-# Which illustration variants exist across this story?
-available = []
-for key in ("base", "v1"):
-    if any(p.get("image_variants", {}).get(key) for p in panels):
-        available.append(key)
-labels = {"base": "Storybook", "v1": "Detailed"}
-
-with top_r:
-    if len(available) > 1:
-        choice = st.radio(
-            "Illustrations",
-            options=available,
-            format_func=lambda k: labels.get(k, k),
-            horizontal=True,
-            label_visibility="collapsed",
-        )
-    else:
-        choice = available[0] if available else None
-
-
-def panel_image(panel: dict) -> str | None:
-    variants = panel.get("image_variants", {})
-    if choice and variants.get(choice):
-        return variants[choice]
-    return panel.get("image_url")  # fallback to default
-
-
-def pick_audio(variants: dict, default=None) -> str | None:
-    """Narration for the current variant, falling back to base / any / default."""
-    variants = variants or {}
-    if choice and variants.get(choice):
-        return variants[choice]
-    return variants.get("base") or next(iter(variants.values()), None) or default
-
 
 # ── Title + context ───────────────────────────────────────────────────────────
 st.markdown(f"# {story['title']}")
@@ -103,18 +66,17 @@ if story.get("introduction"):
         f"<div class='tk-context'>{story['introduction']}</div>",
         unsafe_allow_html=True,
     )
-    intro_audio = pick_audio(story.get("introduction_audio", {}))
-    if intro_audio:
+    if story.get("introduction_audio"):
         st.caption("🔊 Listen to the introduction")
-        st.audio(intro_audio)
+        st.audio(story["introduction_audio"])
 
 st.write("")
 st.divider()
 
 # ── Scenes: image beside narrative text, alternating sides ────────────────────
 for i, panel in enumerate(panels):
-    img = panel_image(panel)
-    audio = pick_audio(panel.get("audio_variants", {}), panel.get("audio_url"))
+    img = panel.get("image_url")
+    audio = panel.get("audio_url")
     text_block = (
         f"<div class='tk-panelnum'>Scene {panel.get('panel_number', i + 1)}</div>"
         f"<h3 style='margin:0.2rem 0 0.6rem;'>{panel.get('title','')}</h3>"
@@ -153,10 +115,9 @@ if story.get("conclusion"):
         f"<div class='tk-context'>{story['conclusion']}</div>",
         unsafe_allow_html=True,
     )
-    concl_audio = pick_audio(story.get("conclusion_audio", {}))
-    if concl_audio:
+    if story.get("conclusion_audio"):
         st.caption("🔊 Listen to the ending")
-        st.audio(concl_audio)
+        st.audio(story["conclusion_audio"])
 
 if story.get("moral_lesson"):
     st.write("")

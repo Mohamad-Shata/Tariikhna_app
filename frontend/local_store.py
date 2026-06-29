@@ -42,20 +42,11 @@ def _loads(value, default):
 
 
 def _media_path(rel):
-    """Absolute path to an illustration, or None if missing/blank."""
+    """Absolute path to a media file, or None if missing/blank."""
     if not rel:
         return None
     p = MEDIA_ROOT / rel
     return str(p) if p.exists() else None
-
-
-def _variants_to_paths(variants: dict) -> dict:
-    out = {}
-    for key, rel in (variants or {}).items():
-        path = _media_path(rel)
-        if path:
-            out[key] = path
-    return out
 
 
 def _story_summary(row: sqlite3.Row, panel_count: int) -> dict:
@@ -70,8 +61,8 @@ def _story_summary(row: sqlite3.Row, panel_count: int) -> dict:
         "reading_age": row["reading_age"],
         "key_figures": _loads(row["key_figures"], []),
         "cover_image": _media_path(row["cover_image"]),
-        "introduction_audio": _variants_to_paths(_loads(row["introduction_audio"], {})),
-        "conclusion_audio": _variants_to_paths(_loads(row["conclusion_audio"], {})),
+        "introduction_audio": _media_path(row["introduction_audio"]),
+        "conclusion_audio": _media_path(row["conclusion_audio"]),
         "panel_count": panel_count,
     }
 
@@ -85,9 +76,7 @@ def _panel_payload(row: sqlite3.Row) -> dict:
         "narrative_text": row["narrative_text"],
         "moral_lesson": row["moral_lesson"],
         "image_url": _media_path(row["image_url"]),
-        "image_variants": _variants_to_paths(_loads(row["image_variants"], {})),
         "audio_url": _media_path(row["audio_url"]),
-        "audio_variants": _variants_to_paths(_loads(row["audio_variants"], {})),
         "characters": schema.get("characters", []),
         "era": schema.get("era"),
         "region": schema.get("region"),

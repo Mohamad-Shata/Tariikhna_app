@@ -6,13 +6,8 @@ Two tables:
   story-level context shown on the library + detail pages (title, intro,
   conclusion, moral, reading age, key figures, cover image).
 - Scene: one comic panel inside a story — the narrative text shown beside the
-  illustration, plus the illustration(s) themselves and the full schema JSON
-  emitted by the pipeline.
-
-Each Scene keeps BOTH illustration variants produced by the image pipeline:
-  - image_url       -> the default illustration shown (base set)
-  - image_variants  -> {"base": "<url>", "v1": "<url>"} so the reader can switch
-                       between the two generated illustration sets.
+  illustration, the illustration itself, its narration audio, and the full
+  schema JSON emitted by the pipeline.
 
 The pipeline-oriented fields (schema_json, status, safety_notes) are kept so the
 generation pipeline (routers/scenes.py) keeps working unchanged; the storybook
@@ -38,10 +33,9 @@ class Story(SQLModel, table=True):
     key_figures: list = Field(default=[], sa_column=Column(JSON))
     cover_image: Optional[str] = None       # relative media path of cover panel
 
-    # Narration for the intro/conclusion text, per illustration variant:
-    # {"base": "<path>", "v1": "<path>"}
-    introduction_audio: dict = Field(default={}, sa_column=Column(JSON))
-    conclusion_audio: dict = Field(default={}, sa_column=Column(JSON))
+    # Narration (relative media path) for the intro / conclusion text.
+    introduction_audio: Optional[str] = None
+    conclusion_audio: Optional[str] = None
 
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -63,13 +57,9 @@ class Scene(SQLModel, table=True):
     # Pipeline status: draft -> safety_checked -> image_generated -> published
     status: str = Field(default="draft")
 
-    # Default illustration (relative media path or absolute URL) + all variants.
+    # Illustration and narration for this panel (relative media path or URL).
     image_url: Optional[str] = None
-    image_variants: dict = Field(default={}, sa_column=Column(JSON))
-
-    # Narration of this panel's text, per illustration variant.
     audio_url: Optional[str] = None
-    audio_variants: dict = Field(default={}, sa_column=Column(JSON))
 
     safety_notes: Optional[str] = None      # why something was flagged, if it was
 
